@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video Downloader</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(120deg, #f6d365, #fda085);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #ffffffcc;
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 450px;
+      width: 95%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    h1 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #00b4d8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0077b6;
+    }
+    .result {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .result video {
+      width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    .ad-bar {
+      margin-top: 30px;
+      padding: 10px;
+      text-align: center;
+      background-color: #ffeb3b;
+      color: #333;
+      font-size: 14px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>&#128229; Pinterest & Instagram Video Downloader</h1>
+    <input type="text" id="videoURL" placeholder="Paste video URL here..." />
+    <button onclick="getDownloadLink()">Get Download Link</button>
+    <div class="result" id="result"></div>
+    <div class="ad-bar">Your Ad Here | Promote Your Product or Brand</div>
+  </div>
+
+  <script>
+    async function getDownloadLink() {
+      const url = document.getElementById("videoURL").value.trim();
+      const result = document.getElementById("result");
+
+      if (!url) {
+        result.innerHTML = "Please paste a video URL.";
+        return;
+      }
+
+      result.innerHTML = "Fetching video... Please wait.";
+
+      try {
+        const res = await fetch(`/.netlify/functions/getVideo?url=${encodeURIComponent(url)}`);
+        const data = await res.json();
+
+        if (data.videoUrl) {
+          result.innerHTML = \`
+            <video controls src="\${data.videoUrl}"></video>
+            <br/>
+            <a href="\${data.videoUrl}" download>Download HD Video</a>
+          \`;
+        } else {
+          result.innerHTML = "Video not found or unsupported link.";
+        }
+      } catch (err) {
+        result.innerHTML = "Error fetching video.";
+      }
+    }
+  </script>
+</body>
+</html>
